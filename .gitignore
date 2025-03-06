@@ -1,0 +1,45 @@
+# 🔹 Ignore virtual environments
+myenv_1/
+venv/
+env/
+
+# 🔹 Ignore dataset files (so large files are not uploaded)
+dataset/
+*.csv
+*.xlsx
+*.json
+*.zip
+
+# 🔹 Ignore compiled Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 🔹 Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# 🔹 Ignore logs & debug files
+logs/
+*.log
+
+# 🔹 Ignore environment variables (if using .env)
+.env
+
+# 🔹 Ignore VSCode settings (if using VSCode)
+.vscode/
+
+# 🔹 Ignore dependencies installed via pip
+*.egg-info/
+pip-log.txt
+pip-delete-this-directory.txt
+
+
+
+# 🔹 Ignore Render deployment temporary files
+render.yaml
+myvenv_1/
+
+
+*.dll
+"myvenv_1/Lib/site-packages/xgboost/lib/xgboost.dll" 
