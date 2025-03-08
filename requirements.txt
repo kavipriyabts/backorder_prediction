@@ -17,4 +17,5 @@ pandas==2.2.3
 numpy==2.0.2
 scikit-learn==1.6.1
 joblib==1.4.2
-pydantic>=2  
+pydantic>=2 
+cython==3.0.12 
