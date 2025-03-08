@@ -1,5 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
+
 from source.pipeline.prediction_pipeline import PredictionPipeline
 
 app = FastAPI()
@@ -29,3 +34,7 @@ def predict(request: PredictionRequest):
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+APP_HOST = "0.0.0.0"
+APP_PORT = 5000
+
