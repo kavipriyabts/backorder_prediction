@@ -4,10 +4,12 @@ import pandas as pd
 from pandas import DataFrame
 import joblib  # Import joblib for loading models
 import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 import logging  # Update import if needed
-from exception import BackOrderException  # Update import if needed
-from ml.pre_processing import drop_columns  # Ensure this function exists
+
+from source.exception import BackOrderException  # Update import if needed
+from source.ml.pre_processing import drop_columns  # Ensure this function exists
 
 class PredictionPipeline:
     """
