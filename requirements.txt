@@ -19,3 +19,6 @@ scikit-learn==1.6.1
 joblib==1.4.2
 pydantic>=2 
 cython==0.29.36
+setuptools==68.0.0
+wheel>=0.40.0
+
