@@ -40,5 +40,5 @@ if __name__ == "__main__":
     uvicorn.run(app , host= "APP_HOST", port = "APP_PORT", reload=True)
 
 
-APP_HOST = "0.0.0.0"
+APP_HOST = "127.0.0.1"
 APP_PORT = 8000
