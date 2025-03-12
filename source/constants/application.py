@@ -36,9 +36,10 @@ def predict(request: PredictionRequest):
 def health_check():
     return {"status": "healthy"}
 
-if __name__ == "__main__":
-    uvicorn.run(app , host= "APP_HOST", port = "APP_PORT", reload=True)
-
-
+# Define host and port as variables
 APP_HOST = "127.0.0.1"
-APP_PORT = "8000"
+APP_PORT = 8000
+
+if __name__ == "__main__":
+    # Use the variables directly without quotes
+    uvicorn.run(app, host=APP_HOST, port=APP_PORT, reload=True)
