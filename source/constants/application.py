@@ -37,6 +37,8 @@ def health_check():
     return {"status": "healthy"}
 
 if __name__ == "__main__":
-    uvicorn.run("your_script_name:app", APP_HOST="0.0.0.0", APP_PORT=8000, reload=True)
+    uvicorn.run(app , host= "APP_HOST", port = "APP_PORT", reload=True)
 
 
+APP_HOST = "0.0.0.0"
+APP_PORT = 8000
