@@ -2,9 +2,10 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import sys
 import os
+import uvicorn
+
+# Ensure the path to the prediction pipeline is correct
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-
-
 from source.pipeline.prediction_pipeline import PredictionPipeline
 
 app = FastAPI()
@@ -35,6 +36,7 @@ def predict(request: PredictionRequest):
 def health_check():
     return {"status": "healthy"}
 
-APP_HOST = "0.0.0.0"
-APP_PORT = 5000
+if __name__ == "__main__":
+    uvicorn.run("your_script_name:app", host="0.0.0.0", port=8000, reload=True)
+
 
