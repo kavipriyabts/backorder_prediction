@@ -37,8 +37,8 @@ def health_check():
     return {"status": "healthy"}
 
 # Define host and port as variables
-APP_HOST = "192.168.1.2"
-APP_PORT = 8000
+APP_HOST = "0.0.0.0"
+APP_PORT = 8001
 
 if __name__ == "__main__":
     # Use the variables directly without quotes
