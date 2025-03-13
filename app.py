@@ -1,15 +1,14 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import Response, JSONResponse
-from starlette.responses import RedirectResponse
-from uvicorn import run as app_run
+from fastapi.responses import RedirectResponse
+from pydantic import BaseModel
 import logging
+import uvicorn
 
 # Import your application constants and pipeline classes
-from source.constants.application import APP_HOST, APP_PORT # type: ignore
+from source.constants.application import APP_HOST, APP_PORT
 from source.pipeline.prediction_pipeline import PredictionPipeline
 from source.pipeline.training_pipeline import TrainPipeline
-
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
@@ -41,25 +40,39 @@ async def train_route_client():
         train_pipeline = TrainPipeline()
         train_pipeline.run_pipeline()
         logger.info("Training completed successfully.")
-        return Response("Training successful !!")
+        return {"message": "Training successful!"}
     except Exception as e:
         logger.error(f"Error occurred during training: {e}")
-        raise HTTPException(status_code=500, detail=f"Error Occurred! {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error occurred: {str(e)}")
+
+# Define request body format for prediction
+class PredictionRequest(BaseModel):
+    feature1: float
+    feature2: float
+    feature3: float
+    # Add all required features based on your dataset
 
 # Route to make predictions
-@app.get("/predict")
-async def predict_route_client():
+@app.post("/predict")
+async def predict_route_client(request: PredictionRequest):
     try:
         logger.info("Prediction started.")
         prediction_pipeline = PredictionPipeline()
-        prediction_pipeline.initiate_prediction()
+        data = request.dict()  # Convert request to dictionary
+        result = prediction_pipeline.initiate_prediction(data)
         logger.info("Prediction completed successfully.")
-        return Response("Prediction successful and predictions are stored in S3 bucket !!")
+        return {"prediction": result}
     except Exception as e:
         logger.error(f"Error occurred during prediction: {e}")
-        raise HTTPException(status_code=500, detail=f"Error Occurred! {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error occurred: {str(e)}")
+
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
 
 # Entry point to run the application
 if __name__ == "__main__":
-    app_run(app, host=APP_HOST, port=APP_PORT)
+    uvicorn.run(app, host=APP_HOST, port=APP_PORT, reload=True)
+
 
