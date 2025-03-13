@@ -69,18 +69,30 @@ class TrainPipeline:
         except Exception as e:
             raise BackOrderException(e, sys)
 
-    def start_model_trainer(self, data_transformation_artifact: DataTransformationArtifact) -> ModelTrainerArtifact:
+    def start_data_transformation(self, data_validation_artifact: DataValidationArtifact) -> DataTransformationArtifact:
         try:
-            logging.info("Starting model training")
-            model_trainer = ModelTrainer(
-                data_transformation_artifact=data_transformation_artifact,
-                model_trainer_config=self.model_trainer_config,
+            logging.info("Starting data transformation")
+            data_transformation = DataTransformation(
+                data_validation_artifact, self.data_transformation_config
             )
-            model_trainer_artifact = model_trainer.initiate_model_trainer()
-            logging.info("Model training completed successfully")
-            return model_trainer_artifact
+            data_transformation_artifact = data_transformation.initiate_data_transformation()
+
+            # ✅ Ensure all required paths are included
+            data_transformation_artifact = DataTransformationArtifact(
+                transformed_train_file_path=data_transformation_artifact.transformed_train_file_path,
+                transformed_test_file_path=data_transformation_artifact.transformed_test_file_path,
+                preprocessor_object_file_path=data_transformation_artifact.preprocessor_object_file_path,
+                label_encoder_object_file_path=data_transformation_artifact.label_encoder_object_file_path,
+                schema_file_path=self.data_validation_config.schema_file_path,  # ✅ Add schema path
+                validated_train_file_path=data_validation_artifact.validated_train_file_path,  # ✅ Add validated train file
+                validated_test_file_path=data_validation_artifact.validated_test_file_path  # ✅ Add validated test file
+            )
+
+            logging.info("Data transformation completed successfully")
+            return data_transformation_artifact
         except Exception as e:
             raise BackOrderException(e, sys)
+
 
     def start_model_evaluation(
         self,
