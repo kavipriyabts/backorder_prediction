@@ -33,25 +33,29 @@ class ModelTrainer:
         """
         Initialize ModelTrainer instance.
         """
-        self.data_transformation_artifact = data_transformation_artifact
-        self.model_trainer_config = model_trainer_config
+        try:
+            self.data_transformation_artifact = data_transformation_artifact
+            self.model_trainer_config = model_trainer_config
+            logging.info("ModelTrainer initialized successfully.")
+        except Exception as e:
+            raise BackOrderException(f"Error initializing ModelTrainer: {str(e)}", sys)
 
     def initiate_model_trainer(self) -> ModelTrainerArtifact:
         """
         Initiate the model training process and return the model trainer artifact.
         """
-        
-        logging.info("Entered initiate_model_trainer method of ModelTrainer class")
+        logging.info("Starting model training process...")
 
         try:
             # Load transformed training and testing data
             train_arr = load_numpy_array_data(
                 file_path=self.data_transformation_artifact.transformed_train_file_path
             )
-
             test_arr = load_numpy_array_data(
                 file_path=self.data_transformation_artifact.transformed_test_file_path
             )
+
+            logging.info(f"Training data shape: {train_arr.shape}, Testing data shape: {test_arr.shape}")
 
             # Split features and target
             x_train, y_train, x_test, y_test = (
@@ -62,41 +66,45 @@ class ModelTrainer:
             )
 
             # Initialize and train the model
+            logging.info("Initializing the Tuned Model for training...")
             model = TunedModel().initiate_model()
             model.fit(x_train, y_train)
+            logging.info("Model training completed.")
 
             # Calculate metrics for training and testing
+            logging.info("Calculating performance metrics...")
             model_train_metrics: ClassificationMetricArtifact = calculate_metric(model, x_train, y_train)
             model_test_metrics: ClassificationMetricArtifact = calculate_metric(model, x_test, y_test)
 
+            logging.info(f"Training Balanced Accuracy: {model_train_metrics.balanced_accuracy_score}")
+            logging.info(f"Testing Balanced Accuracy: {model_test_metrics.balanced_accuracy_score}")
+
             # Check if the model meets the expected accuracy
             if model_test_metrics.balanced_accuracy_score < self.model_trainer_config.expected_accuracy:
-                logging.info("No best model found with test score more than base score")
+                logging.error("No best model found with test score more than base score.")
                 raise Exception("No best model found with test score more than base score")
             
-            logging.info(f"Best model found with test score: {model_test_metrics.balanced_accuracy_score}")
-            logging.info(f"Best model found with train score: {model_train_metrics.balanced_accuracy_score}")
+            logging.info("Model meets expected accuracy requirements.")
 
             # Load preprocessing and label encoder objects
             preprocessing_obj = load_object(
-                file_path=self.data_transformation_artifact.preprocessor_object_file_path
+                file_path=self.data_transformation_artifact.preprocessor_object_path
             )
-
             label_encoder_obj = load_object(
-                file_path=self.data_transformation_artifact.label_encoder_object_file_path
+                file_path=self.data_transformation_artifact.label_encoder_object_path
             )
 
             # Create the BackOrderPredictionModel object
+            logging.info("Creating BackOrderPredictionModel object...")
             backOrder_prediction_model = BackOrderPredictionModel(
                 preprocessing_object=preprocessing_obj,
                 trained_model_object=model,
                 label_encoder_object=label_encoder_obj
             )
 
-            logging.info("Created BackOrderPredictionModel object with preprocessor and model")
-
             # Save the trained model locally
             save_object(self.model_trainer_config.trained_model_file_path, backOrder_prediction_model)
+            logging.info(f"Trained model saved at {self.model_trainer_config.trained_model_file_path}")
 
             # Create and return the model trainer artifact
             model_trainer_artifact = ModelTrainerArtifact(
@@ -105,10 +113,10 @@ class ModelTrainer:
                 test_metric_artifact=model_test_metrics,
             )
 
-            logging.info(f"Model trainer artifact: {model_trainer_artifact}")
-
+            logging.info("Model training process completed successfully.")
             return model_trainer_artifact
 
         except Exception as e:
-            raise BackOrderException(e, sys) from e
-print("model_trainer file is completed")
+            raise BackOrderException(f"Error in initiate_model_trainer: {str(e)}", sys)
+
+print("✅ model_trainer.py is completed successfully")
