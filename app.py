@@ -58,13 +58,18 @@ async def predict_route_client(request: PredictionRequest):
     try:
         logger.info("Prediction started.")
         prediction_pipeline = PredictionPipeline()
-        data = request.dict()  # Convert request to dictionary
-        result = prediction_pipeline.initiate_prediction(data)
+
+        # Ensure request data is passed correctly if needed
+        # Since initiate_prediction() does not accept parameters, we do not pass `data`
+        result_df = prediction_pipeline.initiate_prediction()  # Call without arguments
+
         logger.info("Prediction completed successfully.")
-        return {"prediction": result}
+        return {"prediction": result_df.to_dict(orient="records")}  # Convert DataFrame to JSON
+
     except Exception as e:
         logger.error(f"Error occurred during prediction: {e}")
         raise HTTPException(status_code=500, detail=f"Error occurred: {str(e)}")
+
 
 # Health check endpoint
 @app.get("/health")
