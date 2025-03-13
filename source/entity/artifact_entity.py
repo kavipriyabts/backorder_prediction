@@ -19,11 +19,18 @@ class DataValidationArtifact:
     validated_train_file_path: str
     validated_test_file_path: str
 
+from dataclasses import dataclass
+
 @dataclass
 class DataTransformationArtifact:
     transformed_train_file_path: str
     transformed_test_file_path: str
     preprocessor_object_path: str
+    schema_file_path: str  # ✅ Schema file path added
+    validated_train_file_path: str  # ✅ Validated train file path added
+    validated_test_file_path: str  # ✅ Fixed the syntax error
+    label_encoder_object_path: str 
+
 
 @dataclass
 class ModelTrainerArtifact:
