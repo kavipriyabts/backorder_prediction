@@ -103,12 +103,12 @@ class ModelTrainer:
             )
 
             # Save the trained model locally
-            save_object(self.model_trainer_config.trained_model_file_path, backOrder_prediction_model)
-            logging.info(f"Trained model saved at {self.model_trainer_config.trained_model_file_path}")
+            save_object(self.model_trainer_config.trained_model_path, backOrder_prediction_model)
+            logging.info(f"Trained model saved at {self.model_trainer_config.trained_model_path}")
 
             # Create and return the model trainer artifact
             model_trainer_artifact = ModelTrainerArtifact(
-                trained_model_file_path=self.model_trainer_config.trained_model_file_path,
+                trained_model_file_path=self.model_trainer_config.trained_model_path,
                 train_metric_artifact=model_train_metrics,
                 test_metric_artifact=model_test_metrics,
             )
